@@ -39,11 +39,11 @@ background-size: 30px 30px;
             <div class="space-y-4">
                 <div class="space-y-1">
                     <label class="text-[10px] font-black text-slate-500 uppercase ml-1">Utilizador GitHub</label>
-                    <input type="text" id="ghUser" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-4 text-sm text-white focus:border-red-600 outline-none">
+                    <input type="text" id="ghUser" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-4 text-sm text-white focus:border-red-600 outline-none" placeholder="Ex: azag666">
                 </div>
                 <div class="space-y-1">
                     <label class="text-[10px] font-black text-slate-500 uppercase ml-1">Repositório</label>
-                    <input type="text" id="ghRepo" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-4 text-sm text-white focus:border-red-600 outline-none">
+                    <input type="text" id="ghRepo" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-4 text-sm text-white focus:border-red-600 outline-none" placeholder="Ex: xvid">
                 </div>
                 <div class="space-y-1">
                     <label class="text-[10px] font-black text-slate-500 uppercase ml-1">Token PAT</label>
@@ -101,9 +101,31 @@ background-size: 30px 30px;
         document.getElementById('configArea').classList.toggle('hidden');
     }
 
+    // Função para limpar inputs automaticamente (Ex: extrair 'xvid' de 'https://github.com/azag666/xvid')
+    function cleanInput(val, type) {
+        val = val.trim().replace(/\/$/, "");
+        if (val.includes('github.com/')) {
+            const parts = val.split('github.com/')[1].split('/');
+            if (type === 'user') return parts[0];
+            if (type === 'repo') return parts[1] || parts[0];
+        }
+        if (val.includes('/')) return val.split('/').pop();
+        return val;
+    }
+
     function saveConfig() {
-        const fields = ['ghUser', 'ghRepo', 'ghToken'];
-        fields.forEach(f => localStorage.setItem(f, document.getElementById(f).value));
+        const user = cleanInput(document.getElementById('ghUser').value, 'user');
+        const repo = cleanInput(document.getElementById('ghRepo').value, 'repo');
+        const token = document.getElementById('ghToken').value.trim();
+
+        // Atualizar campos visuais com a versão limpa
+        document.getElementById('ghUser').value = user;
+        document.getElementById('ghRepo').value = repo;
+
+        localStorage.setItem('ghUser', user);
+        localStorage.setItem('ghRepo', repo);
+        localStorage.setItem('ghToken', token);
+        
         toggleConfig();
         showStatus('Sistema Configurado com Sucesso!', 'success');
     }
@@ -111,10 +133,10 @@ background-size: 30px 30px;
     document.getElementById('disparoForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const user = document.getElementById('ghUser').value;
-        const repo = document.getElementById('ghRepo').value;
-        const token = document.getElementById('ghToken').value;
-        const url = document.getElementById('videoUrl').value;
+        const user = cleanInput(document.getElementById('ghUser').value, 'user');
+        const repo = cleanInput(document.getElementById('ghRepo').value, 'repo');
+        const token = document.getElementById('ghToken').value.trim();
+        const url = document.getElementById('videoUrl').value.trim();
         
         if(!user || !repo || !token) {
             showStatus('Erro: Configure a API primeiro!', 'error');
