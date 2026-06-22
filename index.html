@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SniperExtract v3.5 - Corrigido</title>
+    <title>SniperExtract v4.0 - Multi-Destino</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -14,17 +14,18 @@
         .bg-grid { background-image: radial-gradient(circle at 1px 1px, rgba(239, 68, 68, 0.15) 1px, transparent 0); background-size: 30px 30px; }
     </style>
 </head>
-<body class="h-screen flex items-center justify-center p-4 bg-grid">
+<body class="min-h-screen flex items-center justify-center p-4 bg-grid py-10">
 
 <div class="glass max-w-lg w-full p-8 rounded-[2rem] shadow-2xl relative overflow-hidden border-t-4 border-t-red-600">
-    <div class="text-center mb-10 relative z-10">
+    <div class="text-center mb-8 relative z-10">
         <div class="bg-red-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-red-600/40">
             <i class="fa-solid fa-bolt text-2xl text-white"></i>
         </div>
         <h1 class="text-3xl font-black text-white tracking-tighter uppercase italic">Sniper<span class="text-red-600">Extract</span></h1>
+        <p class="text-[10px] text-slate-400 font-bold tracking-widest uppercase mt-2">Painel de Disparo Dinâmico</p>
     </div>
 
-    <form id="disparoForm" class="space-y-5 relative z-10">
+    <form id="disparoForm" class="space-y-4 relative z-10">
         <div id="configArea" class="hidden absolute inset-0 bg-slate-950/98 z-30 flex flex-col justify-center p-10 rounded-[2rem] border-2 border-red-600/50">
             <h3 class="text-white font-black text-xl mb-6 uppercase tracking-widest text-red-600">Configuração API</h3>
             <div class="space-y-4">
@@ -48,19 +49,40 @@
         </div>
 
         <div>
-            <label class="block text-[11px] font-black text-slate-500 mb-2 uppercase text-center">URL do Site Alvo</label>
-            <input type="url" id="videoUrl" required class="w-full bg-slate-900 border border-slate-800 text-white text-sm rounded-xl p-4 focus:ring-2 focus:ring-red-600 outline-none" placeholder="Cole o link do vídeo ou categoria">
+            <label class="block text-[10px] font-black text-slate-500 mb-1 uppercase">URL do Site Alvo (Scraping)</label>
+            <input type="url" id="videoUrl" required class="w-full bg-slate-900 border border-slate-800 text-white text-sm rounded-xl p-3 focus:ring-2 focus:ring-red-600 outline-none" placeholder="Link do vídeo ou categoria">
         </div>
 
-        <button type="button" onclick="toggleConfig()" class="text-slate-500 hover:text-white text-[10px] font-black uppercase flex items-center gap-2">
-            <i class="fa-solid fa-gear"></i> Configurar API
-        </button>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="col-span-2">
+                <label class="block text-[10px] font-black text-slate-500 mb-1 uppercase">ID do Grupo Telegram</label>
+                <input type="text" id="chatId" class="w-full bg-slate-900 border border-slate-800 text-white text-sm rounded-xl p-3 focus:ring-2 focus:ring-red-600 outline-none" placeholder="Ex: -100123456789 (Opcional, deixa vazio para usar o padrão)">
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-[10px] font-black text-slate-500 mb-1 uppercase">Copy da Mensagem (CTA)</label>
+            <textarea id="captionText" rows="2" class="w-full bg-slate-900 border border-slate-800 text-white text-sm rounded-xl p-3 focus:ring-2 focus:ring-red-600 outline-none" placeholder="Sua copy de vendas persuasiva aqui..."></textarea>
+        </div>
+
+        <div class="space-y-2 p-3 border border-slate-800 rounded-xl bg-slate-900/50">
+            <label class="block text-[10px] font-black text-slate-500 uppercase text-center mb-2">Links dos Botões</label>
+            <input type="url" id="linkWhatsapp" required class="w-full bg-slate-800 border border-slate-700 text-white text-sm rounded-lg p-2 focus:ring-1 focus:ring-green-500 outline-none" placeholder="📱 Link WhatsApp (R$ 15,00)">
+            <input type="url" id="linkAmigas" required class="w-full bg-slate-800 border border-slate-700 text-white text-sm rounded-lg p-2 focus:ring-1 focus:ring-purple-500 outline-none" placeholder="👯‍♀️ Link Amigas (R$ 15,00)">
+            <input type="url" id="linkChamada" required class="w-full bg-slate-800 border border-slate-700 text-white text-sm rounded-lg p-2 focus:ring-1 focus:ring-blue-500 outline-none" placeholder="📹 Link Chamada (R$ 45,00)">
+        </div>
+
+        <div class="flex justify-between items-center py-1">
+            <button type="button" onclick="toggleConfig()" class="text-slate-500 hover:text-white text-[10px] font-black uppercase flex items-center gap-2">
+                <i class="fa-solid fa-gear"></i> Configurar API
+            </button>
+        </div>
 
         <button type="submit" id="btnEnviar" class="w-full text-white bg-red-600 hover:bg-red-700 font-black rounded-xl text-lg py-4 shadow-xl transition-all active:scale-95">
-            <span id="btnText">DISPARAR AGORA <i class="fa-solid fa-paper-plane ml-2"></i></span>
+            <span id="btnText">DISPARAR CAMPANHA <i class="fa-solid fa-paper-plane ml-2"></i></span>
             <div id="loadingSpinner" class="hidden flex items-center justify-center gap-3">
                 <div class="w-5 h-5 border-2 border-white/20 border-t-white rounded-full loader"></div>
-                <span>A ENVIAR...</span>
+                <span>A PROCESSAR...</span>
             </div>
         </button>
     </form>
@@ -68,19 +90,18 @@
 </div>
 
 <script>
-    // FUNÇÃO QUE LIMPA URLS E DEIXA APENAS O NOME DO USER/REPO
     function sanitize(val) {
         if (!val) return "";
-        let clean = val.trim().replace(/\/$/, ""); // Remove barra no final
+        let clean = val.trim().replace(/\/$/, "");
         if (clean.includes("github.com/")) {
             const parts = clean.split("github.com/")[1].split("/");
-            return parts[1] || parts[0]; // Tenta pegar o nome após a barra
+            return parts[1] || parts[0];
         }
-        return clean.split("/").pop(); // Pega apenas a última parte se houver barras
+        return clean.split("/").pop();
     }
 
     window.onload = () => {
-        ['ghUser', 'ghRepo', 'ghToken'].forEach(f => {
+        ['ghUser', 'ghRepo', 'ghToken', 'chatId', 'captionText'].forEach(f => {
             if(localStorage.getItem(f)) document.getElementById(f).value = localStorage.getItem(f);
         });
     };
@@ -88,7 +109,6 @@
     function toggleConfig() { document.getElementById('configArea').classList.toggle('hidden'); }
 
     function saveConfig() {
-        // Aplica a limpeza antes de guardar
         const user = sanitize(document.getElementById('ghUser').value);
         const repo = sanitize(document.getElementById('ghRepo').value);
         const token = document.getElementById('ghToken').value.trim();
@@ -108,15 +128,23 @@
         const user = localStorage.getItem('ghUser');
         const repo = localStorage.getItem('ghRepo');
         const token = localStorage.getItem('ghToken');
+        
         const url = document.getElementById('videoUrl').value.trim();
+        const chatId = document.getElementById('chatId').value.trim();
+        const caption = document.getElementById('captionText').value.trim();
+        const linkWpp = document.getElementById('linkWhatsapp').value.trim();
+        const linkAmigas = document.getElementById('linkAmigas').value.trim();
+        const linkChamada = document.getElementById('linkChamada').value.trim();
+
+        // Salvar preferências para o próximo disparo
+        localStorage.setItem('chatId', chatId);
+        localStorage.setItem('captionText', caption);
 
         if(!user || !repo || !token) { showStatus('Erro: Configure a API!', 'error'); return; }
 
         setLoading(true);
         try {
-            // URL DA API AGORA É MONTADA DE FORMA SEGURA
             const apiUrl = `https://api.github.com/repos/${user}/${repo}/dispatches`;
-            console.log("Chamando:", apiUrl);
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -126,12 +154,19 @@
                 },
                 body: JSON.stringify({
                     event_type: 'iniciar_disparo',
-                    client_payload: { video_url: url, button_link: 'internal_pix' }
+                    client_payload: { 
+                        video_url: url,
+                        chat_id: chatId,
+                        caption_text: caption,
+                        link_whatsapp: linkWpp,
+                        link_amigas: linkAmigas,
+                        link_chamada: linkChamada
+                    }
                 })
             });
 
             if (response.status === 204) {
-                showStatus('✅ Sucesso! Verifique as Actions do GitHub.', 'success');
+                showStatus('✅ Disparo iniciado com os novos parâmetros!', 'success');
                 document.getElementById('videoUrl').value = '';
             } else {
                 const data = await response.json();
