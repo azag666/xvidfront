@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sniper Dashboard - Automação Avançada</title>
+    <title>Sniper Control v5.0 - Ultimate</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -13,16 +13,21 @@
         .input-clean:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
         .loader { border-top-color: transparent; animation: spinner 1s linear infinite; }
         @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Toggle Switch CSS */
+        .toggle-checkbox:checked { right: 0; border-color: #3b82f6; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #3b82f6; }
+        .toggle-checkbox { right: 0; z-index: 1; border-color: #e2e8f0; transition: all 0.3s; }
+        .toggle-label { width: 3rem; height: 1.5rem; background-color: #475569; transition: all 0.3s; border-radius: 9999px; }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-8 flex justify-center">
 
-<div class="glass-panel max-w-2xl w-full p-8 rounded-2xl shadow-2xl relative overflow-hidden h-fit">
+<div class="glass-panel max-w-3xl w-full p-8 rounded-2xl shadow-2xl relative overflow-hidden h-fit">
     
     <div class="flex justify-between items-center mb-8 border-b border-slate-700 pb-6">
         <div>
             <h1 class="text-2xl font-bold tracking-tight">Sniper Control</h1>
-            <p class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">Painel de Disparo Dinâmico</p>
+            <p class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">V5 Ultimate - Painel de Controle Total</p>
         </div>
         <button type="button" onclick="toggleConfig()" class="text-slate-400 hover:text-white transition-colors">
             <i class="fa-solid fa-gear text-xl"></i>
@@ -31,7 +36,7 @@
 
     <form id="disparoForm" class="space-y-8">
         
-        <div id="configArea" class="hidden absolute inset-0 bg-slate-900/95 z-50 p-8 flex flex-col justify-center backdrop-blur-sm">
+        <div id="configArea" class="hidden absolute inset-0 bg-slate-900/98 z-50 p-8 flex flex-col justify-center backdrop-blur-sm">
             <h3 class="text-xl font-bold mb-6">Credenciais da API</h3>
             <div class="space-y-4">
                 <input type="text" id="ghUser" class="w-full input-clean rounded-lg p-3 text-sm text-white" placeholder="Utilizador GitHub">
@@ -45,7 +50,7 @@
         </div>
 
         <section class="space-y-4">
-            <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wide border-b border-slate-800 pb-2">1. Fonte e Processamento</h2>
+            <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wide border-b border-slate-800 pb-2">1. Extração e Vídeo</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -53,58 +58,89 @@
                     <input type="url" id="videoUrl" class="w-full input-clean rounded-lg p-3 text-sm" placeholder="Link de extração...">
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">OU Mídia Própria (Link Direto)</label>
+                    <label class="block text-xs text-slate-400 mb-1">OU Mídia Própria (Link Direto MP4)</label>
                     <input type="url" id="customMediaUrl" class="w-full input-clean rounded-lg p-3 text-sm" placeholder="Link do seu MP4...">
                 </div>
             </div>
 
-            <div class="grid grid-cols-3 gap-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">Qtd. Extração</label>
+                    <label class="block text-xs text-slate-400 mb-1">Qtd. Vídeos</label>
                     <input type="number" id="scrapeLimit" min="1" max="10" value="5" class="w-full input-clean rounded-lg p-3 text-sm">
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">Formato do Vídeo</label>
+                    <label class="block text-xs text-slate-400 mb-1">Tamanho</label>
                     <select id="videoDuration" class="w-full input-clean rounded-lg p-3 text-sm">
-                        <option value="teaser">Teaser (15 seg)</option>
-                        <option value="full">Vídeo Completo</option>
+                        <option value="teaser">Teaser (15s)</option>
+                        <option value="full">Completo</option>
                     </select>
                 </div>
-                <div>
+                <div class="col-span-2">
                     <label class="block text-xs text-slate-400 mb-1">Marca D'água (Texto)</label>
-                    <input type="text" id="watermarkText" class="w-full input-clean rounded-lg p-3 text-sm" placeholder="Ex: @SeuCanal">
+                    <div class="flex gap-2">
+                        <input type="text" id="watermarkText" class="w-full input-clean rounded-lg p-3 text-sm" placeholder="Ex: @SeuCanal">
+                        <select id="watermarkPos" class="w-1/2 input-clean rounded-lg p-3 text-sm">
+                            <option value="bottom_right">Baixo Direita</option>
+                            <option value="bottom_left">Baixo Esquerda</option>
+                            <option value="top_right">Topo Direita</option>
+                            <option value="top_left">Topo Esquerda</option>
+                            <option value="center">Centro</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section class="space-y-4">
-            <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wide border-b border-slate-800 pb-2">2. Destino e Copy</h2>
+            <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wide border-b border-slate-800 pb-2">2. Estrutura da Postagem</h2>
             
-            <div>
-                <label class="block text-xs text-slate-400 mb-1">ID do Grupo Telegram (Opcional)</label>
-                <input type="text" id="chatId" class="w-full input-clean rounded-lg p-3 text-sm" placeholder="-100...">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-900/50 p-4 rounded-xl border border-slate-800">
+                <div class="flex flex-col items-center justify-center">
+                    <label class="text-xs text-slate-400 mb-2 font-bold uppercase">Spoiler / Borrar</label>
+                    <div class="relative inline-block w-12 align-middle select-none">
+                        <input type="checkbox" id="useSpoiler" checked class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                        <label for="useSpoiler" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center justify-center">
+                    <label class="text-xs text-slate-400 mb-2 font-bold uppercase">Puxar Título Original</label>
+                    <div class="relative inline-block w-12 align-middle select-none">
+                        <input type="checkbox" id="useTitle" checked class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                        <label for="useTitle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                    </div>
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-xs text-slate-400 mb-1 font-bold uppercase">Formato de Envio</label>
+                    <select id="sendMode" class="w-full input-clean rounded-lg p-3 text-sm border-blue-500/30">
+                        <option value="single">Uma de Cada Vez (Vídeo + Botões Juntos)</option>
+                        <option value="gallery">Galeria (Álbum acima, Botões Separados abaixo)</option>
+                    </select>
+                </div>
             </div>
 
             <div>
-                <label class="block text-xs text-slate-400 mb-1">Copy Principal</label>
-                <textarea id="captionText" rows="3" class="w-full input-clean rounded-lg p-3 text-sm" placeholder="Texto persuasivo da sua postagem..."></textarea>
+                <label class="block text-xs text-slate-400 mb-1">ID do Grupo Telegram (Opcional)</label>
+                <input type="text" id="chatId" class="w-full input-clean rounded-lg p-3 text-sm" placeholder="Ex: -100123456789">
+            </div>
+
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">Copy Principal (Texto do Botão)</label>
+                <textarea id="captionText" rows="3" class="w-full input-clean rounded-lg p-3 text-sm" placeholder="Sua copy de conversão aqui..."></textarea>
             </div>
         </section>
 
         <section class="space-y-4">
             <div class="flex justify-between items-end border-b border-slate-800 pb-2">
-                <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wide">3. Botões de Ação</h2>
+                <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wide">3. Botões CTA</h2>
                 <button type="button" onclick="addButton()" class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1 rounded text-blue-400 font-medium transition-colors">
-                    + Adicionar Botão
+                    + Botão
                 </button>
             </div>
-            
-            <div id="buttonsContainer" class="space-y-3">
-                </div>
+            <div id="buttonsContainer" class="space-y-3"></div>
         </section>
 
         <button type="submit" id="btnEnviar" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-lg py-4 transition-all shadow-lg shadow-blue-900/20 active:scale-[0.98]">
-            <span id="btnText">INICIAR DISPARO</span>
+            <span id="btnText">EXECUTAR DISPARO</span>
             <div id="loadingSpinner" class="hidden flex items-center justify-center gap-3">
                 <div class="w-5 h-5 border-2 border-white rounded-full loader"></div>
                 <span class="text-sm">PROCESSANDO...</span>
@@ -126,8 +162,8 @@
         dynamicButtons.forEach((btn, index) => {
             container.innerHTML += `
                 <div class="flex gap-2 items-center bg-slate-900/50 p-2 rounded-lg border border-slate-800">
-                    <input type="text" value="${btn.name}" oninput="updateBtn(${index}, 'name', this.value)" class="flex-1 input-clean rounded p-2 text-xs" placeholder="Nome do Botão (Use Emojis)">
-                    <input type="url" value="${btn.url}" oninput="updateBtn(${index}, 'url', this.value)" class="flex-2 input-clean rounded p-2 text-xs w-1/2" placeholder="Link de destino">
+                    <input type="text" value="${btn.name}" oninput="updateBtn(${index}, 'name', this.value)" class="flex-1 input-clean rounded p-2 text-xs" placeholder="Nome do Botão">
+                    <input type="url" value="${btn.url}" oninput="updateBtn(${index}, 'url', this.value)" class="flex-2 input-clean rounded p-2 text-xs w-1/2" placeholder="Link (URL)">
                     <button type="button" onclick="removeButton(${index})" class="text-red-400 hover:text-red-300 p-2"><i class="fa-solid fa-trash"></i></button>
                 </div>
             `;
@@ -144,6 +180,13 @@
         });
         const savedBtns = localStorage.getItem('dynamicButtons');
         if(savedBtns) dynamicButtons = JSON.parse(savedBtns);
+        
+        if(localStorage.getItem('watermarkPos')) document.getElementById('watermarkPos').value = localStorage.getItem('watermarkPos');
+        if(localStorage.getItem('sendMode')) document.getElementById('sendMode').value = localStorage.getItem('sendMode');
+        
+        document.getElementById('useSpoiler').checked = localStorage.getItem('useSpoiler') !== 'false';
+        document.getElementById('useTitle').checked = localStorage.getItem('useTitle') !== 'false';
+
         renderButtons();
     };
 
@@ -168,7 +211,6 @@
         
         if(!user || !repo || !token) { showStatus('Erro: Configure a API primeiro.', 'error'); return; }
 
-        // Validar botões
         const validButtons = dynamicButtons.filter(b => b.name && b.url);
         if(validButtons.length === 0) { showStatus('Erro: Adicione pelo menos um botão com link válido.', 'error'); return; }
 
@@ -178,6 +220,10 @@
             scrape_limit: document.getElementById('scrapeLimit').value.toString(),
             video_duration: document.getElementById('videoDuration').value,
             watermark_text: document.getElementById('watermarkText').value.trim(),
+            watermark_pos: document.getElementById('watermarkPos').value,
+            use_spoiler: document.getElementById('useSpoiler').checked.toString(),
+            use_title: document.getElementById('useTitle').checked.toString(),
+            send_mode: document.getElementById('sendMode').value,
             chat_id: document.getElementById('chatId').value.trim(),
             caption_text: document.getElementById('captionText').value.trim(),
             dynamic_buttons: JSON.stringify(validButtons)
@@ -187,10 +233,14 @@
             showStatus('Erro: Forneça um Link de Scraping ou uma Mídia Própria.', 'error'); return;
         }
 
-        // Guardar preferências
+        // Salvar preferências
         localStorage.setItem('chatId', payload.chat_id);
         localStorage.setItem('captionText', payload.caption_text);
         localStorage.setItem('watermarkText', payload.watermark_text);
+        localStorage.setItem('watermarkPos', payload.watermark_pos);
+        localStorage.setItem('sendMode', payload.send_mode);
+        localStorage.setItem('useSpoiler', payload.use_spoiler);
+        localStorage.setItem('useTitle', payload.use_title);
         localStorage.setItem('dynamicButtons', JSON.stringify(validButtons));
 
         setLoading(true);
@@ -201,15 +251,9 @@
                 body: JSON.stringify({ event_type: 'iniciar_disparo', client_payload: payload })
             });
 
-            if (response.status === 204) {
-                showStatus('✅ Comando enviado para o servidor!', 'success');
-            } else {
-                const data = await response.json();
-                showStatus(`❌ Erro: ${data.message}`, 'error');
-            }
-        } catch (error) {
-            showStatus(`❌ Erro de Rede.`, 'error');
-        } finally { setLoading(false); }
+            if (response.status === 204) { showStatus('✅ Comando enviado para o servidor!', 'success'); } 
+            else { const data = await response.json(); showStatus(`❌ Erro: ${data.message}`, 'error'); }
+        } catch (error) { showStatus(`❌ Erro de Rede.`, 'error'); } finally { setLoading(false); }
     });
 
     function setLoading(isLoading) {
