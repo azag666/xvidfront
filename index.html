@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sniper Control v5.1 - Ultimate</title>
+    <title>Sniper Control v5.2 - Sem Limites</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -27,7 +27,7 @@
     <div class="flex justify-between items-center mb-8 border-b border-slate-700 pb-6">
         <div>
             <h1 class="text-2xl font-bold tracking-tight">Sniper Control</h1>
-            <p class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">V5.1 Ultimate - Painel de Controle Total</p>
+            <p class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">V5.2 - Controle Total Sem Limites</p>
         </div>
         <button type="button" onclick="toggleConfig()" class="text-slate-400 hover:text-white transition-colors">
             <i class="fa-solid fa-gear text-xl"></i>
@@ -58,8 +58,8 @@
                     <input type="url" id="videoUrl" class="w-full input-clean rounded-lg p-3 text-sm" placeholder="Link de extração...">
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">OU Mídia Própria (Link Direto MP4)</label>
-                    <input type="url" id="customMediaUrl" class="w-full input-clean rounded-lg p-3 text-sm" placeholder="Link do seu MP4...">
+                    <label class="block text-xs text-slate-400 mb-1">OU Mídia Própria (Link Direto MP4/JPG)</label>
+                    <input type="url" id="customMediaUrl" class="w-full input-clean rounded-lg p-3 text-sm" placeholder="Link do seu ficheiro...">
                 </div>
             </div>
 
@@ -130,14 +130,14 @@
             </div>
 
             <div>
-                <label class="block text-xs text-slate-400 mb-1">Copy Principal (Texto do Botão)</label>
+                <label class="block text-xs text-slate-400 mb-1">Copy Principal (Texto livre - Deixe em branco se quiser)</label>
                 <textarea id="captionText" rows="3" class="w-full input-clean rounded-lg p-3 text-sm" placeholder="A sua copy de conversão aqui..."></textarea>
             </div>
         </section>
 
         <section class="space-y-4">
             <div class="flex justify-between items-end border-b border-slate-800 pb-2">
-                <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wide">3. Botões CTA</h2>
+                <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wide">3. Botões CTA (Opcional)</h2>
                 <button type="button" onclick="addButton()" class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1 rounded text-blue-400 font-medium transition-colors">
                     + Botão
                 </button>
@@ -218,10 +218,9 @@
         
         if(!user || !repo || !token) { showStatus('Erro: Configure a API primeiro.', 'error'); return; }
 
+        // AQUI: Retirado o bloqueio que exigia botões válidos. O array pode ir vazio [].
         const validButtons = dynamicButtons.filter(b => b.name && b.url);
-        if(validButtons.length === 0) { showStatus('Erro: Adicione pelo menos um botão com link válido.', 'error'); return; }
 
-        // Criação do pacote único com todas as configurações
         const appPayload = {
             video_url: document.getElementById('videoUrl').value.trim(),
             custom_media_url: document.getElementById('customMediaUrl').value.trim(),
@@ -242,7 +241,6 @@
             showStatus('Erro: Forneça um Link de Scraping ou uma Mídia Própria.', 'error'); return;
         }
 
-        // Guardar preferências localmente
         localStorage.setItem('chatId', appPayload.chat_id);
         localStorage.setItem('captionText', appPayload.caption_text);
         localStorage.setItem('watermarkText', appPayload.watermark_text);
