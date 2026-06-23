@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sniper Control v5.2 - Sem Limites</title>
+    <title>Sniper Control v5.3 - Piloto Automático</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -27,7 +27,7 @@
     <div class="flex justify-between items-center mb-8 border-b border-slate-700 pb-6">
         <div>
             <h1 class="text-2xl font-bold tracking-tight">Sniper Control</h1>
-            <p class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">V5.2 - Controle Total Sem Limites</p>
+            <p class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">V5.3 - Piloto Automático 24/7</p>
         </div>
         <button type="button" onclick="toggleConfig()" class="text-slate-400 hover:text-white transition-colors">
             <i class="fa-solid fa-gear text-xl"></i>
@@ -54,8 +54,8 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">URL Scraping (XV)</label>
-                    <input type="url" id="videoUrl" class="w-full input-clean rounded-lg p-3 text-sm" placeholder="Link de extração...">
+                    <label class="block text-xs text-slate-400 mb-1">URL Scraping <span class="text-blue-400">(Vazio = Sorteio Auto)</span></label>
+                    <input type="url" id="videoUrl" class="w-full input-clean rounded-lg p-3 text-sm" placeholder="Deixe em branco para modo automático...">
                 </div>
                 <div>
                     <label class="block text-xs text-slate-400 mb-1">OU Mídia Própria (Link Direto MP4/JPG)</label>
@@ -130,14 +130,14 @@
             </div>
 
             <div>
-                <label class="block text-xs text-slate-400 mb-1">Copy Principal (Texto livre - Deixe em branco se quiser)</label>
-                <textarea id="captionText" rows="3" class="w-full input-clean rounded-lg p-3 text-sm" placeholder="A sua copy de conversão aqui..."></textarea>
+                <label class="block text-xs text-slate-400 mb-1">Copy Principal <span class="text-blue-400">(Vazio = Sorteio Auto)</span></label>
+                <textarea id="captionText" rows="3" class="w-full input-clean rounded-lg p-3 text-sm" placeholder="A sua copy de conversão aqui. Deixe em branco para usar o banco de textos automático..."></textarea>
             </div>
         </section>
 
         <section class="space-y-4">
             <div class="flex justify-between items-end border-b border-slate-800 pb-2">
-                <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wide">3. Botões CTA (Opcional)</h2>
+                <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wide">3. Botões CTA <span class="text-blue-400 text-xs normal-case">(Vazio = Auto)</span></h2>
                 <button type="button" onclick="addButton()" class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1 rounded text-blue-400 font-medium transition-colors">
                     + Botão
                 </button>
@@ -157,23 +157,24 @@
 </div>
 
 <script>
-    let dynamicButtons = [
-        { name: "📱 WhatsApp Pessoa (R$ 15)", url: "" },
-        { name: "👯‍♀️ Amigas (R$ 15)", url: "" }
-    ];
+    let dynamicButtons = []; // Começa vazio para permitir o uso do Banco de Dados Automático por defeito
 
     function renderButtons() {
         const container = document.getElementById('buttonsContainer');
         container.innerHTML = '';
-        dynamicButtons.forEach((btn, index) => {
-            container.innerHTML += `
-                <div class="flex gap-2 items-center bg-slate-900/50 p-2 rounded-lg border border-slate-800">
-                    <input type="text" value="${btn.name}" oninput="updateBtn(${index}, 'name', this.value)" class="flex-1 input-clean rounded p-2 text-xs" placeholder="Nome do Botão">
-                    <input type="url" value="${btn.url}" oninput="updateBtn(${index}, 'url', this.value)" class="flex-2 input-clean rounded p-2 text-xs w-1/2" placeholder="Link (URL)">
-                    <button type="button" onclick="removeButton(${index})" class="text-red-400 hover:text-red-300 p-2"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            `;
-        });
+        if (dynamicButtons.length === 0) {
+            container.innerHTML = '<p class="text-xs text-slate-500 text-center py-2 border border-dashed border-slate-700 rounded-lg">A usar botões automáticos do sistema. Adicione um botão para substituir.</p>';
+        } else {
+            dynamicButtons.forEach((btn, index) => {
+                container.innerHTML += `
+                    <div class="flex gap-2 items-center bg-slate-900/50 p-2 rounded-lg border border-slate-800">
+                        <input type="text" value="${btn.name}" oninput="updateBtn(${index}, 'name', this.value)" class="flex-1 input-clean rounded p-2 text-xs" placeholder="Nome do Botão">
+                        <input type="url" value="${btn.url}" oninput="updateBtn(${index}, 'url', this.value)" class="flex-2 input-clean rounded p-2 text-xs w-1/2" placeholder="Link (URL)">
+                        <button type="button" onclick="removeButton(${index})" class="text-red-400 hover:text-red-300 p-2"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+            });
+        }
     }
 
     function updateBtn(index, field, value) { dynamicButtons[index][field] = value; }
@@ -218,7 +219,6 @@
         
         if(!user || !repo || !token) { showStatus('Erro: Configure a API primeiro.', 'error'); return; }
 
-        // AQUI: Retirado o bloqueio que exigia botões válidos. O array pode ir vazio [].
         const validButtons = dynamicButtons.filter(b => b.name && b.url);
 
         const appPayload = {
@@ -237,9 +237,7 @@
             dynamic_buttons: validButtons
         };
 
-        if(!appPayload.video_url && !appPayload.custom_media_url) {
-            showStatus('Erro: Forneça um Link de Scraping ou uma Mídia Própria.', 'error'); return;
-        }
+        // As travas de erro foram retiradas para permitir disparos totalmente vazios (Modo Automático/Sorteio)
 
         localStorage.setItem('chatId', appPayload.chat_id);
         localStorage.setItem('captionText', appPayload.caption_text);
@@ -262,7 +260,7 @@
                 })
             });
 
-            if (response.status === 204) { showStatus('✅ Comando enviado para o servidor!', 'success'); } 
+            if (response.status === 204) { showStatus('✅ Comando enviado para o servidor! O bot irá agir conforme a configuração.', 'success'); } 
             else { const data = await response.json(); showStatus(`❌ Erro: ${data.message}`, 'error'); }
         } catch (error) { showStatus(`❌ Erro de Rede.`, 'error'); } finally { setLoading(false); }
     });
