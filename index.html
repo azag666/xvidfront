@@ -125,7 +125,7 @@
 
             <div>
                 <label class="block text-xs text-slate-400 mb-1">Copy Principal (Texto do Botão)</label>
-                <textarea id="captionText" rows="3" class="w-full input-clean rounded-lg p-3 text-sm" placeholder="Sua copy de conversão aqui..."></textarea>
+                <textarea id="captionText" rows="3" class="w-full input-clean rounded-lg p-3 text-sm" placeholder="A sua copy de conversão aqui..."></textarea>
             </div>
         </section>
 
@@ -143,7 +143,7 @@
             <span id="btnText">EXECUTAR DISPARO</span>
             <div id="loadingSpinner" class="hidden flex items-center justify-center gap-3">
                 <div class="w-5 h-5 border-2 border-white rounded-full loader"></div>
-                <span class="text-sm">PROCESSANDO...</span>
+                <span class="text-sm">A PROCESSAR...</span>
             </div>
         </button>
     </form>
@@ -214,33 +214,34 @@
         const validButtons = dynamicButtons.filter(b => b.name && b.url);
         if(validButtons.length === 0) { showStatus('Erro: Adicione pelo menos um botão com link válido.', 'error'); return; }
 
-        const payload = {
+        // Criação do pacote único com todas as configurações para contornar o limite do GitHub
+        const appPayload = {
             video_url: document.getElementById('videoUrl').value.trim(),
             custom_media_url: document.getElementById('customMediaUrl').value.trim(),
-            scrape_limit: document.getElementById('scrapeLimit').value.toString(),
+            scrape_limit: parseInt(document.getElementById('scrapeLimit').value) || 5,
             video_duration: document.getElementById('videoDuration').value,
             watermark_text: document.getElementById('watermarkText').value.trim(),
             watermark_pos: document.getElementById('watermarkPos').value,
-            use_spoiler: document.getElementById('useSpoiler').checked.toString(),
-            use_title: document.getElementById('useTitle').checked.toString(),
+            use_spoiler: document.getElementById('useSpoiler').checked,
+            use_title: document.getElementById('useTitle').checked,
             send_mode: document.getElementById('sendMode').value,
             chat_id: document.getElementById('chatId').value.trim(),
             caption_text: document.getElementById('captionText').value.trim(),
-            dynamic_buttons: JSON.stringify(validButtons)
+            dynamic_buttons: validButtons
         };
 
-        if(!payload.video_url && !payload.custom_media_url) {
+        if(!appPayload.video_url && !appPayload.custom_media_url) {
             showStatus('Erro: Forneça um Link de Scraping ou uma Mídia Própria.', 'error'); return;
         }
 
-        // Salvar preferências
-        localStorage.setItem('chatId', payload.chat_id);
-        localStorage.setItem('captionText', payload.caption_text);
-        localStorage.setItem('watermarkText', payload.watermark_text);
-        localStorage.setItem('watermarkPos', payload.watermark_pos);
-        localStorage.setItem('sendMode', payload.send_mode);
-        localStorage.setItem('useSpoiler', payload.use_spoiler);
-        localStorage.setItem('useTitle', payload.use_title);
+        // Guardar preferências localmente
+        localStorage.setItem('chatId', appPayload.chat_id);
+        localStorage.setItem('captionText', appPayload.caption_text);
+        localStorage.setItem('watermarkText', appPayload.watermark_text);
+        localStorage.setItem('watermarkPos', appPayload.watermark_pos);
+        localStorage.setItem('sendMode', appPayload.send_mode);
+        localStorage.setItem('useSpoiler', appPayload.use_spoiler);
+        localStorage.setItem('useTitle', appPayload.use_title);
         localStorage.setItem('dynamicButtons', JSON.stringify(validButtons));
 
         setLoading(true);
@@ -248,7 +249,11 @@
             const response = await fetch(`https://api.github.com/repos/${user}/${repo}/dispatches`, {
                 method: 'POST',
                 headers: { 'Accept': 'application/vnd.github.v3+json', 'Authorization': `token ${token}` },
-                body: JSON.stringify({ event_type: 'iniciar_disparo', client_payload: payload })
+                // Envia o pacote encapsulado dentro da propriedade "config_data"
+                body: JSON.stringify({ 
+                    event_type: 'iniciar_disparo', 
+                    client_payload: { config_data: JSON.stringify(appPayload) } 
+                })
             });
 
             if (response.status === 204) { showStatus('✅ Comando enviado para o servidor!', 'success'); } 
