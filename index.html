@@ -29,7 +29,7 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs mb-1 text-slate-400">URL Scraping (Vazio = Sorteio Auto)</label>
-                        <input type="text" id="url_scraping" class="input-bg w-full p-2 text-sm rounded text-white" placeholder="https://www.erome.com/a/...">
+                        <input type="text" id="url_scraping" class="input-bg w-full p-2 text-sm rounded text-white" placeholder="https://www.erome.com/search?q=...">
                     </div>
                     <div>
                         <label class="block text-xs mb-1 text-slate-400">OU Mídia Própria (Link Direto MP4/JPG)</label>
@@ -89,8 +89,8 @@
             <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg mt-6 transition">
                 EXECUTAR DISPARO
             </button>
-            <div id="statusMsg" class="hidden text-center mt-3 text-sm text-green-400">
-                ✅ Comando enviado para o servidor! O bot irá agir conforme a configuração.
+            <div id="statusMsg" class="hidden text-center mt-3 text-sm font-bold">
+                <!-- A mensagem de erro ou sucesso aparecerá aqui -->
             </div>
         </form>
     </div>
@@ -99,7 +99,6 @@
         document.getElementById('sniperForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // Reúne todas as variáveis do formulário
             const configData = {
                 url_scraping: document.getElementById('url_scraping').value.trim(),
                 media_propria: document.getElementById('media_propria').value.trim(),
@@ -114,36 +113,36 @@
             };
 
             const statusMsg = document.getElementById('statusMsg');
+            statusMsg.classList.remove('hidden', 'text-green-400', 'text-red-400');
+            statusMsg.classList.add('text-slate-400');
+            statusMsg.innerText = '⏳ Enviando comando...';
             
             try {
-                // DISPARO PARA O GITHUB ACTIONS
-                // ATENÇÃO: Preencha com os dados do seu repositório de back-end
-                const response = await fetch('https://api.github.com/repos/SEU_USUARIO/NOME_DO_REPO/dispatches', {
+                // Configuração do Webhook para o GitHub Actions
+                const response = await fetch('https://api.github.com/repos/azag666/xvid/dispatches', {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/vnd.github.v3+json',
-                        'Authorization': 'token SEU_TOKEN_GITHUB_AQUI',
+                        'Authorization': 'token COLE_SEU_TOKEN_AQUI',
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         event_type: 'iniciar_disparo',
                         client_payload: {
-                            config_data: JSON.stringify(configData) // Envia tudo como string JSON
+                            config_data: JSON.stringify(configData)
                         }
                     })
                 });
 
                 if (response.ok) {
-                    statusMsg.classList.remove('hidden');
-                    statusMsg.classList.replace('text-red-400', 'text-green-400');
+                    statusMsg.classList.replace('text-slate-400', 'text-green-400');
                     statusMsg.innerText = '✅ Comando enviado para o servidor! O bot irá agir conforme a configuração.';
                 } else {
-                    throw new Error('Falha ao enviar webhook');
+                    throw new Error(`Erro na API do GitHub: ${response.status} ${response.statusText}`);
                 }
             } catch (error) {
-                statusMsg.classList.remove('hidden');
-                statusMsg.classList.replace('text-green-400', 'text-red-400');
-                statusMsg.innerText = '❌ Erro ao conectar com o servidor.';
+                statusMsg.classList.replace('text-slate-400', 'text-red-400');
+                statusMsg.innerText = '❌ Erro ao conectar com o servidor. Verifique o Token ou console.';
                 console.error(error);
             }
         });
