@@ -16,11 +16,11 @@
     <div class="panel-bg rounded-lg shadow-xl w-full max-w-3xl p-8 relative overflow-hidden">
         
         <div id="configArea" class="hidden absolute inset-0 bg-slate-900/95 z-50 p-8 flex flex-col justify-center backdrop-blur-sm">
-            <h3 class="text-xl font-bold text-white mb-6">Credenciais da API (Salvas no seu Navegador)</h3>
+            <h3 class="text-xl font-bold text-white mb-6">Credenciais da API</h3>
             <div class="space-y-4">
-                <input type="text" id="ghUser" class="input-bg w-full p-3 rounded text-white text-sm" placeholder="Usuário GitHub (ex: azag666)">
-                <input type="text" id="ghRepo" class="input-bg w-full p-3 rounded text-white text-sm" placeholder="Repositório (ex: xvid)">
-                <input type="password" id="ghToken" class="input-bg w-full p-3 rounded text-white text-sm" placeholder="Token PAT (ghp_...)">
+                <input type="text" id="ghUser" class="input-bg w-full p-3 rounded text-white text-sm" placeholder="Usuário GitHub">
+                <input type="text" id="ghRepo" class="input-bg w-full p-3 rounded text-white text-sm" placeholder="Repositório">
+                <input type="password" id="ghToken" class="input-bg w-full p-3 rounded text-white text-sm" placeholder="Token PAT">
             </div>
             <div class="mt-6 flex gap-3">
                 <button type="button" onclick="toggleConfig()" class="flex-1 bg-slate-700 p-3 rounded-lg font-medium text-white">Cancelar</button>
@@ -31,7 +31,7 @@
         <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
             <div>
                 <h1 class="text-2xl font-bold text-white">Sniper Control</h1>
-                <p class="text-xs text-slate-400">V5.3 - PILOTO AUTOMÁTICO 24/7</p>
+                <p class="text-xs text-slate-400">V5.4 - MODO DE SELEÇÃO ATUALIZADO</p>
             </div>
             <button onclick="toggleConfig()" class="text-slate-400 hover:text-white cursor-pointer text-xl">⚙️</button>
         </div>
@@ -39,20 +39,20 @@
         <form id="sniperForm" class="space-y-6">
             <div>
                 <h2 class="text-sm font-bold text-white mb-3">1. EXTRAÇÃO E VÍDEO</h2>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs mb-1 text-slate-400">URL Scraping (Vazio = Sorteio Auto)</label>
-                        <input type="text" id="url_scraping" class="input-bg w-full p-2 text-sm rounded text-white" placeholder="https://www.erome.com/...">
-                    </div>
-                    <div>
-                        <label class="block text-xs mb-1 text-slate-400">OU Mídia Própria (Link Direto MP4/JPG)</label>
-                        <input type="text" id="media_propria" class="input-bg w-full p-2 text-sm rounded text-white" placeholder="Link do seu ficheiro...">
-                    </div>
+                
+                <div class="mb-4">
+                    <label class="block text-xs mb-1 text-slate-400">URL Scraping Automático (Deixe vazio para usar links manuais)</label>
+                    <input type="text" id="url_scraping" class="input-bg w-full p-2 text-sm rounded text-white" placeholder="https://www.erome.com/...">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-xs mb-1 text-slate-400">Mídia(s) Específica(s) (Cole um link MP4 por linha para ignorar a extração acima)</label>
+                    <textarea id="media_propria" rows="3" class="input-bg w-full p-2 text-sm rounded text-white" placeholder="https://.../video1.mp4&#10;https://.../video2.mp4"></textarea>
                 </div>
 
                 <div class="grid grid-cols-4 gap-4 mt-4">
                     <div>
-                        <label class="block text-xs mb-1 text-slate-400">Qtd.</label>
+                        <label class="block text-xs mb-1 text-slate-400">Qtd. (Apenas Auto)</label>
                         <input type="number" id="qtd" value="1" class="input-bg w-full p-2 text-sm rounded text-white">
                     </div>
                     <div>
@@ -62,7 +62,7 @@
                         </select>
                     </div>
                     <div class="col-span-2">
-                        <label class="block text-xs mb-1 text-slate-400">Marca D'água (Texto, Posição e Fonte)</label>
+                        <label class="block text-xs mb-1 text-slate-400">Marca D'água</label>
                         <input type="text" id="watermark_text" class="input-bg w-full p-2 text-sm rounded text-white" placeholder="Ex: @SeuCanal">
                     </div>
                 </div>
@@ -72,11 +72,11 @@
                 <h2 class="text-sm font-bold text-white mb-3">2. ESTRUTURA DA POSTAGEM</h2>
                 <div class="panel-bg border border-slate-700 p-4 rounded-lg flex items-center justify-between mb-4">
                     <div class="flex flex-col items-center">
-                        <label class="text-xs text-slate-400 mb-2">SPOILER / BORRAR</label>
+                        <label class="text-xs text-slate-400 mb-2">SPOILER</label>
                         <input type="checkbox" id="spoiler" class="toggle-checkbox">
                     </div>
                     <div class="flex flex-col items-center">
-                        <label class="text-xs text-slate-400 mb-2">PUXAR TÍTULO ORIGINAL</label>
+                        <label class="text-xs text-slate-400 mb-2">TÍTULO ORIGINAL</label>
                         <input type="checkbox" id="puxar_titulo" class="toggle-checkbox" checked>
                     </div>
                     <div class="w-1/2">
@@ -88,12 +88,12 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs mb-1 text-slate-400">ID do Grupo Telegram (Opcional)</label>
+                    <label class="block text-xs mb-1 text-slate-400">ID do Grupo Telegram</label>
                     <input type="text" id="chat_id" class="input-bg w-full p-2 text-sm rounded text-white" value="-1003972594490">
                 </div>
 
                 <div class="mt-4">
-                    <label class="block text-xs mb-1 text-slate-400">Copy Principal (Vazio = Sorteio Auto)</label>
+                    <label class="block text-xs mb-1 text-slate-400">Copy Principal</label>
                     <textarea id="copy_principal" rows="3" class="input-bg w-full p-2 text-sm rounded text-white" placeholder="A sua copy de conversão aqui..."></textarea>
                 </div>
             </div>
@@ -106,7 +106,6 @@
     </div>
 
     <script>
-        // Funções para carregar e salvar credenciais seguras no navegador
         window.onload = () => {
             if(localStorage.getItem('ghUser')) document.getElementById('ghUser').value = localStorage.getItem('ghUser');
             if(localStorage.getItem('ghRepo')) document.getElementById('ghRepo').value = localStorage.getItem('ghRepo');
@@ -129,7 +128,6 @@
             msg.innerText = '✅ Credenciais salvas com segurança no navegador!';
         }
 
-        // Função de envio do formulário
         document.getElementById('sniperForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -145,9 +143,13 @@
                 return;
             }
 
+            // Pega o valor do textarea e transforma em um array de URLs limpas
+            const rawMedia = document.getElementById('media_propria').value;
+            const mediaArray = rawMedia.split('\n').map(link => link.trim()).filter(link => link !== '');
+
             const configData = {
                 url_scraping: document.getElementById('url_scraping').value.trim(),
-                media_propria: document.getElementById('media_propria').value.trim(),
+                media_propria: mediaArray.join(','), // Envia como string separada por vírgulas
                 qtd: document.getElementById('qtd').value,
                 tamanho: document.getElementById('tamanho').value,
                 watermark_text: document.getElementById('watermark_text').value,
