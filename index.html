@@ -3,28 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sniper Control V6.0 - Curadoria</title>
+    <title>Sniper Control V5.4</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #0f172a; color: #cbd5e1; font-family: sans-serif; }
         .panel-bg { background-color: #1e293b; }
         .input-bg { background-color: #0f172a; border: 1px solid #334155; }
-        .video-card { transition: all 0.2s; }
-        .video-card:has(input:checked) { border-color: #3b82f6; background-color: #1e3a8a40; }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4 relative">
 
-    <div class="panel-bg rounded-lg shadow-xl w-full max-w-4xl p-8 relative overflow-hidden">
+    <div class="panel-bg rounded-lg shadow-xl w-full max-w-3xl p-8 relative overflow-hidden">
         
-        <!-- Engrenagem / Configurações GitHub (Mantido) -->
         <div id="configArea" class="hidden absolute inset-0 bg-slate-900/95 z-50 p-8 flex flex-col justify-center backdrop-blur-sm">
-            <h3 class="text-xl font-bold text-white mb-6">Credenciais da API</h3>
+            <h3 class="text-xl font-bold text-white mb-6">Credenciais do GitHub</h3>
             <div class="space-y-4">
-                <input type="text" id="ghUser" class="input-bg w-full p-3 rounded text-white" placeholder="Usuário GitHub">
-                <input type="text" id="ghRepo" class="input-bg w-full p-3 rounded text-white" placeholder="Repositório">
-                <input type="password" id="ghToken" class="input-bg w-full p-3 rounded text-white" placeholder="Token PAT">
-                <input type="text" id="apiUrl" class="input-bg w-full p-3 rounded text-white" placeholder="URL da sua API Python (ex: http://IP:8000)">
+                <input type="text" id="ghUser" class="input-bg w-full p-3 rounded text-white text-sm" placeholder="Usuário GitHub (ex: azag666)">
+                <input type="text" id="ghRepo" class="input-bg w-full p-3 rounded text-white text-sm" placeholder="Repositório (ex: xvid_2)">
+                <input type="password" id="ghToken" class="input-bg w-full p-3 rounded text-white text-sm" placeholder="Token PAT (ghp_...)">
             </div>
             <div class="mt-6 flex gap-3">
                 <button type="button" onclick="toggleConfig()" class="flex-1 bg-slate-700 p-3 rounded-lg font-medium text-white">Cancelar</button>
@@ -35,152 +31,101 @@
         <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
             <div>
                 <h1 class="text-2xl font-bold text-white">Sniper Control</h1>
-                <p class="text-xs text-slate-400">V6.0 - CURADORIA VISUAL</p>
+                <p class="text-xs text-slate-400">V5.4 - 100% GITHUB ACTIONS</p>
             </div>
             <button onclick="toggleConfig()" class="text-slate-400 hover:text-white cursor-pointer text-xl">⚙️</button>
         </div>
 
         <form id="sniperForm" class="space-y-6">
-            
-            <!-- Etapa 1: Busca -->
-            <div class="border border-slate-700 p-4 rounded-lg">
-                <h2 class="text-sm font-bold text-white mb-3">1. BUSCAR VÍDEOS</h2>
-                <div class="flex gap-2">
-                    <input type="text" id="url_scraping" class="input-bg w-full p-3 text-sm rounded text-white" placeholder="Cole o link do Erome aqui...">
-                    <button type="button" onclick="loadVideos()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-3 rounded transition whitespace-nowrap">
-                        Carregar Vídeos
-                    </button>
-                </div>
-                <div id="loadingMsg" class="hidden text-slate-400 text-xs mt-2 animate-pulse">Raspando dados do site, aguarde...</div>
-            </div>
-
-            <!-- Etapa 2: Seleção (Invisível até carregar) -->
-            <div id="selectionArea" class="hidden border border-slate-700 p-4 rounded-lg">
-                <div class="flex justify-between items-center mb-3">
-                    <h2 class="text-sm font-bold text-white">2. SELECIONE PARA ENVIAR</h2>
-                    <span id="videoCount" class="text-xs font-bold text-blue-400">0 selecionados</span>
-                </div>
+            <div>
+                <h2 class="text-sm font-bold text-white mb-3">1. EXTRAÇÃO E VÍDEO</h2>
                 
-                <div id="videoGrid" class="grid grid-cols-2 md:grid-cols-4 gap-3 max-h-64 overflow-y-auto p-2 border border-slate-800 rounded">
-                    <!-- Checkboxes de vídeos serão inseridos aqui pelo JS -->
+                <div class="mb-4">
+                    <label class="block text-xs mb-1 text-slate-400">Extração Automática (Deixe vazio se for usar os links manuais abaixo)</label>
+                    <input type="text" id="url_scraping" class="input-bg w-full p-2 text-sm rounded text-white" placeholder="https://www.erome.com/...">
                 </div>
-            </div>
 
-            <!-- Etapa 3: Estrutura -->
-            <div class="border border-slate-700 p-4 rounded-lg">
-                <h2 class="text-sm font-bold text-white mb-3">3. ESTRUTURA E DISPARO</h2>
-                <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="mb-4">
+                    <label class="block text-xs mb-1 text-slate-400">Links Manuais (Cole um link por linha para ignorar a extração automática)</label>
+                    <textarea id="media_propria" rows="4" class="input-bg w-full p-2 text-sm rounded text-white" placeholder="https://.../video1.mp4&#10;https://.../video2.mp4"></textarea>
+                </div>
+
+                <div class="grid grid-cols-4 gap-4 mt-4">
                     <div>
-                        <label class="block text-xs mb-1 text-slate-400">ID do Telegram</label>
-                        <input type="text" id="chat_id" class="input-bg w-full p-2 text-sm rounded text-white" value="-1003972594490">
+                        <label class="block text-xs mb-1 text-slate-400">Qtd. Máxima</label>
+                        <input type="number" id="qtd" value="10" class="input-bg w-full p-2 text-sm rounded text-white">
                     </div>
                     <div>
+                        <label class="block text-xs mb-1 text-slate-400">Tamanho</label>
+                        <select id="tamanho" class="input-bg w-full p-2 text-sm rounded text-white">
+                            <option>Completo</option>
+                        </select>
+                    </div>
+                    <div class="col-span-2">
                         <label class="block text-xs mb-1 text-slate-400">Marca D'água</label>
-                        <input type="text" id="watermark_text" class="input-bg w-full p-2 text-sm rounded text-white" placeholder="@SeuCanal">
+                        <input type="text" id="watermark_text" class="input-bg w-full p-2 text-sm rounded text-white" placeholder="Ex: @SeuCanal">
                     </div>
-                </div>
-                <div class="flex gap-4 mb-4">
-                    <label class="flex items-center text-xs text-slate-400 gap-2"><input type="checkbox" id="spoiler" class="rounded"> SPOILER</label>
-                    <label class="flex items-center text-xs text-slate-400 gap-2"><input type="checkbox" id="puxar_titulo" checked class="rounded"> PUXAR TÍTULO</label>
-                </div>
-                <div>
-                    <label class="block text-xs mb-1 text-slate-400">Copy Principal</label>
-                    <textarea id="copy_principal" rows="2" class="input-bg w-full p-2 text-sm rounded text-white" placeholder="A sua copy de conversão..."></textarea>
                 </div>
             </div>
 
-            <button type="submit" id="btnDisparo" class="w-full bg-slate-600 text-white font-bold py-3 rounded-lg mt-6 transition cursor-not-allowed" disabled>
-                SELECIONE VÍDEOS PRIMEIRO
+            <div>
+                <h2 class="text-sm font-bold text-white mb-3">2. ESTRUTURA DA POSTAGEM</h2>
+                <div class="panel-bg border border-slate-700 p-4 rounded-lg flex items-center justify-between mb-4">
+                    <div class="flex flex-col items-center">
+                        <label class="text-xs text-slate-400 mb-2">SPOILER</label>
+                        <input type="checkbox" id="spoiler" class="toggle-checkbox">
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <label class="text-xs text-slate-400 mb-2">TÍTULO ORIGINAL</label>
+                        <input type="checkbox" id="puxar_titulo" class="toggle-checkbox" checked>
+                    </div>
+                    <div class="w-1/2">
+                        <label class="text-xs text-slate-400 mb-2 block">FORMATO DE ENVIO</label>
+                        <select id="formato_envio" class="input-bg w-full p-2 text-sm rounded text-white">
+                            <option>Uma de Cada Vez</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs mb-1 text-slate-400">ID do Grupo Telegram</label>
+                    <input type="text" id="chat_id" class="input-bg w-full p-2 text-sm rounded text-white" value="-1003972594490">
+                </div>
+
+                <div class="mt-4">
+                    <label class="block text-xs mb-1 text-slate-400">Copy Principal</label>
+                    <textarea id="copy_principal" rows="3" class="input-bg w-full p-2 text-sm rounded text-white" placeholder="Sua copy aqui..."></textarea>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg mt-6 transition">
+                EXECUTAR DISPARO
             </button>
             <div id="statusMsg" class="hidden text-center mt-3 text-sm font-bold"></div>
         </form>
     </div>
 
     <script>
-        let loadedVideos = [];
-
         window.onload = () => {
             if(localStorage.getItem('ghUser')) document.getElementById('ghUser').value = localStorage.getItem('ghUser');
             if(localStorage.getItem('ghRepo')) document.getElementById('ghRepo').value = localStorage.getItem('ghRepo');
             if(localStorage.getItem('ghToken')) document.getElementById('ghToken').value = localStorage.getItem('ghToken');
-            if(localStorage.getItem('apiUrl')) document.getElementById('apiUrl').value = localStorage.getItem('apiUrl');
         };
 
-        function toggleConfig() { document.getElementById('configArea').classList.toggle('hidden'); }
+        function toggleConfig() {
+            document.getElementById('configArea').classList.toggle('hidden');
+        }
 
         function saveConfig() {
             localStorage.setItem('ghUser', document.getElementById('ghUser').value.trim());
             localStorage.setItem('ghRepo', document.getElementById('ghRepo').value.trim());
             localStorage.setItem('ghToken', document.getElementById('ghToken').value.trim());
-            localStorage.setItem('apiUrl', document.getElementById('apiUrl').value.trim());
             toggleConfig();
-        }
-
-        async function loadVideos() {
-            const url = document.getElementById('url_scraping').value.trim();
-            const apiUrl = localStorage.getItem('apiUrl');
-            const loadingMsg = document.getElementById('loadingMsg');
             
-            if (!url) return alert('Cole o link do Erome primeiro!');
-            if (!apiUrl) return alert('Configure a URL da sua API na engrenagem primeiro!');
-
-            loadingMsg.classList.remove('hidden');
-            
-            try {
-                // Chama a sua API no servidor
-                const response = await fetch(`${apiUrl}/api/extrair?url=${encodeURIComponent(url)}`);
-                const data = await response.json();
-                
-                if (data.sucesso && data.videos.length > 0) {
-                    loadedVideos = data.videos;
-                    renderVideoGrid();
-                } else {
-                    alert('Nenhum vídeo encontrado nesse link.');
-                }
-            } catch (error) {
-                alert('Erro ao conectar na sua API. Verifique se ela está rodando.');
-                console.error(error);
-            } finally {
-                loadingMsg.classList.add('hidden');
-            }
-        }
-
-        function renderVideoGrid() {
-            const grid = document.getElementById('videoGrid');
-            grid.innerHTML = '';
-            
-            loadedVideos.forEach((videoUrl, index) => {
-                const div = document.createElement('div');
-                div.className = "video-card border border-slate-700 rounded p-2 flex flex-col items-center gap-2 cursor-pointer";
-                div.innerHTML = `
-                    <video src="${videoUrl}" class="w-full h-20 object-cover rounded bg-black" preload="metadata"></video>
-                    <label class="flex items-center gap-2 text-xs w-full cursor-pointer">
-                        <input type="checkbox" value="${videoUrl}" class="video-checkbox w-4 h-4" onchange="updateSelection()">
-                        Vídeo ${index + 1}
-                    </label>
-                `;
-                grid.appendChild(div);
-            });
-
-            document.getElementById('selectionArea').classList.remove('hidden');
-        }
-
-        function updateSelection() {
-            const selected = document.querySelectorAll('.video-checkbox:checked').length;
-            document.getElementById('videoCount').innerText = `${selected} selecionado(s)`;
-            
-            const btn = document.getElementById('btnDisparo');
-            if (selected > 0) {
-                btn.disabled = false;
-                btn.classList.replace('bg-slate-600', 'bg-blue-600');
-                btn.classList.replace('cursor-not-allowed', 'hover:bg-blue-500');
-                btn.innerText = 'ENVIAR VÍDEOS SELECIONADOS';
-            } else {
-                btn.disabled = true;
-                btn.classList.replace('bg-blue-600', 'bg-slate-600');
-                btn.classList.replace('hover:bg-blue-500', 'cursor-not-allowed');
-                btn.innerText = 'SELECIONE VÍDEOS PRIMEIRO';
-            }
+            const msg = document.getElementById('statusMsg');
+            msg.classList.remove('hidden', 'text-red-400');
+            msg.classList.add('text-green-400');
+            msg.innerText = '✅ Credenciais salvas com segurança!';
         }
 
         document.getElementById('sniperForm').addEventListener('submit', async function(e) {
@@ -189,25 +134,35 @@
             const user = localStorage.getItem('ghUser');
             const repo = localStorage.getItem('ghRepo');
             const token = localStorage.getItem('ghToken');
-            
-            // Coleta apenas as URLs das caixas que o usuário marcou
-            const selectedVideos = Array.from(document.querySelectorAll('.video-checkbox:checked')).map(cb => cb.value);
+            const statusMsg = document.getElementById('statusMsg');
+
+            if (!user || !repo || !token) {
+                statusMsg.classList.remove('hidden', 'text-green-400');
+                statusMsg.classList.add('text-red-400');
+                statusMsg.innerText = '❌ Erro: Configure as credenciais na engrenagem primeiro.';
+                return;
+            }
+
+            // Transforma as quebras de linha em uma string separada por vírgulas para o Python ler
+            const rawMedia = document.getElementById('media_propria').value;
+            const mediaArray = rawMedia.split('\n').map(link => link.trim()).filter(link => link !== '');
 
             const configData = {
-                media_propria: selectedVideos.join(','), // Manda os links exatos que você escolheu
-                url_scraping: "", // Deixa vazio para o Python não raspar tudo de novo
-                qtd: selectedVideos.length,
+                url_scraping: document.getElementById('url_scraping').value.trim(),
+                media_propria: mediaArray.join(','), 
+                qtd: document.getElementById('qtd').value,
+                tamanho: document.getElementById('tamanho').value,
                 watermark_text: document.getElementById('watermark_text').value,
                 spoiler: document.getElementById('spoiler').checked,
                 puxar_titulo: document.getElementById('puxar_titulo').checked,
+                formato_envio: document.getElementById('formato_envio').value,
                 chat_id: document.getElementById('chat_id').value,
                 copy_principal: document.getElementById('copy_principal').value
             };
 
-            const statusMsg = document.getElementById('statusMsg');
             statusMsg.classList.remove('hidden', 'text-green-400', 'text-red-400');
             statusMsg.classList.add('text-slate-400');
-            statusMsg.innerText = '⏳ Enviando comando ao GitHub Actions...';
+            statusMsg.innerText = '⏳ Enviando comando ao GitHub...';
             
             try {
                 const response = await fetch(`https://api.github.com/repos/${user}/${repo}/dispatches`, {
@@ -219,17 +174,21 @@
                     },
                     body: JSON.stringify({
                         event_type: 'iniciar_disparo',
-                        client_payload: { config_data: JSON.stringify(configData) }
+                        client_payload: {
+                            config_data: JSON.stringify(configData)
+                        }
                     })
                 });
 
                 if (response.ok) {
                     statusMsg.classList.replace('text-slate-400', 'text-green-400');
-                    statusMsg.innerText = '✅ Comando enviado! O GitHub fará o download e processamento apenas dos vídeos marcados.';
-                } else { throw new Error('Falha na API.'); }
+                    statusMsg.innerText = '✅ Comando enviado com sucesso! Acompanhe no Actions.';
+                } else {
+                    throw new Error(`Falha na API.`);
+                }
             } catch (error) {
                 statusMsg.classList.replace('text-slate-400', 'text-red-400');
-                statusMsg.innerText = '❌ Erro ao conectar ao GitHub.';
+                statusMsg.innerText = '❌ Erro de permissão ou conexão.';
             }
         });
     </script>
